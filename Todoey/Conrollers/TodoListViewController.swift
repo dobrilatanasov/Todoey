@@ -10,18 +10,26 @@ import UIKit
 
 // When specifing that the class is UITableViewController & the Table View Controller ins chosen in the main storybord then all the delegates and declarations are unnecessary, they are assumed.
 class TodoListViewController: UITableViewController {
-
-    var dummyItems = ["iPhone", "Revolut", "Mac"]
+// We are declaring an array of type Item, set in the Data Model
+    var dummyItems = [Item]()
     
     //set a parameter for the UserDefault plist, where data can be saved
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        if let items = defaults.array(forKey: "TodoListArray") as? [String]{
-            dummyItems = items
-        }
+        
+        let newItem = Item()
+        newItem.name = "iPhone"
+        dummyItems.append(newItem)
+        let newItem2 = Item()
+        newItem2.name = "Mac"
+        dummyItems.append(newItem2)
+        let newItem3 = Item()
+        newItem3.name = "Apple Watch"
+        dummyItems.append(newItem3)
+        
+        
     }
     
     //MARK: Specify the necessary methods for the table view to show data
@@ -30,21 +38,26 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = dummyItems[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = dummyItems[indexPath.row]
+        cell.textLabel?.text = item.name
+        
+        // check the done status and than put the correct accessory
+        if item.done == true {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
         return cell
     }
     
     //MARK: Table View Delegate Method
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //print(dummyItems[indexPath.row])
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        //This euqlas the opposite of itself - this substitudes the if else statement.
+        dummyItems[indexPath.row].done = !dummyItems[indexPath.row].done
         
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     //MARK: Add new items to the list
@@ -61,7 +74,11 @@ class TodoListViewController: UITableViewController {
             if textField.text! == "" {
                 print ("Empty string")
             } else {
-                self.dummyItems.append(textField.text!)
+                
+                let newItem = Item()
+                newItem.name = textField.text!
+                self.dummyItems.append(newItem)
+                
                 //saves the values to a persistent plist
                 self.defaults.set(self.dummyItems, forKey: "TodoListArray")
                 self.tableView.reloadData()
