@@ -13,9 +13,15 @@ class TodoListViewController: UITableViewController {
 
     var dummyItems = ["iPhone", "Revolut", "Mac"]
     
+    //set a parameter for the UserDefault plist, where data can be saved
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        if let items = defaults.array(forKey: "TodoListArray") as? [String]{
+            dummyItems = items
+        }
     }
     
     //MARK: Specify the necessary methods for the table view to show data
@@ -56,6 +62,8 @@ class TodoListViewController: UITableViewController {
                 print ("Empty string")
             } else {
                 self.dummyItems.append(textField.text!)
+                //saves the values to a persistent plist
+                self.defaults.set(self.dummyItems, forKey: "TodoListArray")
                 self.tableView.reloadData()
             }
             
