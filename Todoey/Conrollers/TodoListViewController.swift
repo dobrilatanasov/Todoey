@@ -43,11 +43,10 @@ class TodoListViewController: UITableViewController {
         cell.textLabel?.text = item.name
         
         // check the done status and than put the correct accessory
-        if item.done == true {
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
-        }
+        //Turnery operator >>>
+        // value = condition ? valueIfTrue : value if False
+        cell.accessoryType = item.done == true ? .checkmark : .none
+
         return cell
     }
     
