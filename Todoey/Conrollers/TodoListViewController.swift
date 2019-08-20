@@ -29,6 +29,9 @@ class TodoListViewController: UITableViewController {
         newItem3.name = "Apple Watch"
         dummyItems.append(newItem3)
         
+        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
+            dummyItems = items
+        }
         
     }
     
