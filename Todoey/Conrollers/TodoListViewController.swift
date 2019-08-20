@@ -13,25 +13,16 @@ class TodoListViewController: UITableViewController {
 // We are declaring an array of type Item, set in the Data Model
     var dummyItems = [Item]()
     
+    //get the path to the user documnets directory
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
     //set a parameter for the UserDefault plist, where data can be saved
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        newItem.name = "iPhone"
-        dummyItems.append(newItem)
-        let newItem2 = Item()
-        newItem2.name = "Mac"
-        dummyItems.append(newItem2)
-        let newItem3 = Item()
-        newItem3.name = "Apple Watch"
-        dummyItems.append(newItem3)
-        
-        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-            dummyItems = items
-        }
+        LoadItems()
         
     }
     
@@ -58,9 +49,9 @@ class TodoListViewController: UITableViewController {
         
         //This euqlas the opposite of itself - this substitudes the if else statement.
         dummyItems[indexPath.row].done = !dummyItems[indexPath.row].done
-        
-        tableView.reloadData()
+        SaveItems()
         tableView.deselectRow(at: indexPath, animated: true)
+        
     }
     //MARK: Add new items to the list
     
@@ -74,18 +65,12 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
            
             if textField.text! == "" {
-                print ("Empty string")
             } else {
-                
                 let newItem = Item()
                 newItem.name = textField.text!
                 self.dummyItems.append(newItem)
-                
-                //saves the values to a persistent plist
-                self.defaults.set(self.dummyItems, forKey: "TodoListArray")
-                self.tableView.reloadData()
+                self.SaveItems()
             }
-            
         }
         //Specify the second button and its action
         let action2 = UIAlertAction(title: "Cancel", style: .default) { (action) in
@@ -106,5 +91,28 @@ class TodoListViewController: UITableViewController {
         
     }
     
+    func SaveItems(){
+        //saves the values to a persistent plist
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(dummyItems)
+            try data.write(to: dataFilePath!)
+        } catch{
+            print ("Error encoding")
+        }
+        self.tableView.reloadData()
+    }
+    
+    func LoadItems(){
+        if let data = try? Data(contentsOf: dataFilePath!){
+            let decoder = PropertyListDecoder()
+            do{
+            dummyItems = try decoder.decode([Item].self, from: data)
+            } catch {
+                print ("Error decoding")
+            }
+            
+        }
+    }
 }
 
