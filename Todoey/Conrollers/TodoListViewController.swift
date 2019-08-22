@@ -7,22 +7,25 @@
 //
 
 import UIKit
+import CoreData
 
 // When specifing that the class is UITableViewController & the Table View Controller ins chosen in the main storybord then all the delegates and declarations are unnecessary, they are assumed.
 class TodoListViewController: UITableViewController {
 // We are declaring an array of type Item, set in the Data Model
     var dummyItems = [Item]()
     
-    //get the path to the user documnets directory
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+
     
     //set a parameter for the UserDefault plist, where data can be saved
     let defaults = UserDefaults.standard
     
+    // set an object that refers to the app delagate, so that we can attach the persistant container to the constant
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        LoadItems()
+//        LoadItems()
         
     }
     
@@ -62,12 +65,17 @@ class TodoListViewController: UITableViewController {
         //Create the alert controller and specify the title and the text of it
         let alert = UIAlertController(title: "New Todoey", message: "", preferredStyle: .alert)
         //Create the action - this adds the button at the bottom of the of the message
+        
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
            
             if textField.text! == "" {
             } else {
-                let newItem = Item()
+
+                // create an object of type item from context which is the persistant container
+                let newItem = Item(context: self.context)
+                
                 newItem.name = textField.text!
+                newItem.done = false
                 self.dummyItems.append(newItem)
                 self.SaveItems()
             }
@@ -92,27 +100,26 @@ class TodoListViewController: UITableViewController {
     }
     
     func SaveItems(){
-        //saves the values to a persistent plist
-        let encoder = PropertyListEncoder()
+        //saves the values to a db
+       
         do {
-            let data = try encoder.encode(dummyItems)
-            try data.write(to: dataFilePath!)
+            try context.save()
         } catch{
             print ("Error encoding")
         }
         self.tableView.reloadData()
     }
     
-    func LoadItems(){
-        if let data = try? Data(contentsOf: dataFilePath!){
-            let decoder = PropertyListDecoder()
-            do{
-            dummyItems = try decoder.decode([Item].self, from: data)
-            } catch {
-                print ("Error decoding")
-            }
-            
-        }
-    }
+//    func LoadItems(){
+//        if let data = try? Data(contentsOf: dataFilePath!){
+//            let decoder = PropertyListDecoder()
+//            do{
+//            dummyItems = try decoder.decode([Item].self, from: data)
+//            } catch {
+//                print ("Error decoding")
+//            }
+//
+//        }
+//    }
 }
 
