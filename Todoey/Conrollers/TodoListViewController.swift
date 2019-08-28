@@ -25,7 +25,7 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        LoadItems()
+       LoadItems()
         
     }
     
@@ -49,9 +49,13 @@ class TodoListViewController: UITableViewController {
     
     //MARK: Table View Delegate Method
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        if dummyItems[indexPath.row].done == true {
+            context.delete(dummyItems[indexPath.row])
+            dummyItems.remove(at: indexPath.row)
+        } else {
         //This euqlas the opposite of itself - this substitudes the if else statement.
-        dummyItems[indexPath.row].done = !dummyItems[indexPath.row].done
+       dummyItems[indexPath.row].done = !dummyItems[indexPath.row].done
+        }
         SaveItems()
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -110,16 +114,14 @@ class TodoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-//    func LoadItems(){
-//        if let data = try? Data(contentsOf: dataFilePath!){
-//            let decoder = PropertyListDecoder()
-//            do{
-//            dummyItems = try decoder.decode([Item].self, from: data)
-//            } catch {
-//                print ("Error decoding")
-//            }
-//
-//        }
-//    }
+    func LoadItems(){
+
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        do{
+        dummyItems = try context.fetch(request)
+        } catch {
+            print ("Error fetching the results \(error)")
+        }
+    }
 }
 
