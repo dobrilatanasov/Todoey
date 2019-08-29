@@ -132,30 +132,34 @@ extension TodoListViewController: UISearchBarDelegate {
         //Set the request by specifing its type and from where it fetches data. Basically we set the request load it with filters and sorters and run it
         let request : NSFetchRequest<Item> = Item.fetchRequest()
         //Specify the querry, where %@ is the argument, [cd] makes it not case censitive
-        let predicate = NSPredicate(format: "name MATCHES[cd] %@", searchBar.text!)
         //run the rquest
-        request.predicate = predicate
+        request.predicate = NSPredicate(format: "name MATCHES[cd] %@", searchBar.text!)
         //Set sort discriptor, which is a query for sorting the data, here we sort by title
-        let sortDiscriptor = NSSortDescriptor(key: "name", ascending: true)
         //run the sorting. It expects an array of sort discriptors, which can pass several sorting rules
-        request.sortDescriptors = [sortDiscriptor]
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         //actually fetch the data
         LoadItems(with: request)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text?.count == 0 {
+            LoadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        } else {
         //Set the request by specifing its type and from where it fetches data. Basically we set the request load it with filters and sorters and run it
         let request : NSFetchRequest<Item> = Item.fetchRequest()
         //Specify the querry, where %@ is the argument, [cd] makes it not case censitive
-        let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
         //run the rquest
-        request.predicate = predicate
+        request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
         //Set sort discriptor, which is a query for sorting the data, here we sort by title
-        let sortDiscriptor = NSSortDescriptor(key: "name", ascending: true)
         //run the sorting. It expects an array of sort discriptors, which can pass several sorting rules
-        request.sortDescriptors = [sortDiscriptor]
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         //actually fetch the data
         LoadItems(with: request)
+        }
     }
 }
 
