@@ -24,6 +24,7 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
        LoadItems()
         
@@ -102,7 +103,7 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true,completion: nil)
         
     }
-    
+    //MARK: Core Data Save & Load Methods
     func SaveItems(){
         //saves the values to a db
        
@@ -111,17 +112,50 @@ class TodoListViewController: UITableViewController {
         } catch{
             print ("Error encoding")
         }
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
     
-    func LoadItems(){
+    func LoadItems(with request : NSFetchRequest<Item> = Item.fetchRequest()){
 
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
         do{
         dummyItems = try context.fetch(request)
         } catch {
             print ("Error fetching the results \(error)")
         }
+        tableView.reloadData()
+    }
+}
+
+//MARK: - Search Bar Methods
+extension TodoListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        //Set the request by specifing its type and from where it fetches data. Basically we set the request load it with filters and sorters and run it
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        //Specify the querry, where %@ is the argument, [cd] makes it not case censitive
+        let predicate = NSPredicate(format: "name MATCHES[cd] %@", searchBar.text!)
+        //run the rquest
+        request.predicate = predicate
+        //Set sort discriptor, which is a query for sorting the data, here we sort by title
+        let sortDiscriptor = NSSortDescriptor(key: "name", ascending: true)
+        //run the sorting. It expects an array of sort discriptors, which can pass several sorting rules
+        request.sortDescriptors = [sortDiscriptor]
+        //actually fetch the data
+        LoadItems(with: request)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        //Set the request by specifing its type and from where it fetches data. Basically we set the request load it with filters and sorters and run it
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        //Specify the querry, where %@ is the argument, [cd] makes it not case censitive
+        let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
+        //run the rquest
+        request.predicate = predicate
+        //Set sort discriptor, which is a query for sorting the data, here we sort by title
+        let sortDiscriptor = NSSortDescriptor(key: "name", ascending: true)
+        //run the sorting. It expects an array of sort discriptors, which can pass several sorting rules
+        request.sortDescriptors = [sortDiscriptor]
+        //actually fetch the data
+        LoadItems(with: request)
     }
 }
 
