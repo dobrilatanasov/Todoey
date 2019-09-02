@@ -10,6 +10,45 @@
     </dependencies>
     <scenes>
         <!--Todoey-->
+        <scene sceneID="lKk-6b-qSW">
+            <objects>
+                <tableViewController id="qG2-vH-pzU" customClass="CategoryViewController" customModule="Todoey" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="bqk-sB-RME">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CategoryCell" id="zrI-wR-Iwx">
+                                <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zrI-wR-Iwx" id="R0M-bm-Lxo">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="qG2-vH-pzU" id="K1m-1A-n0z"/>
+                            <outlet property="delegate" destination="qG2-vH-pzU" id="a3L-ar-tqI"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Todoey" id="EMo-rM-qUv">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Gf8-Rj-3K2">
+                            <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="addButtonPressed:" destination="qG2-vH-pzU" id="b20-8X-9f7"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <segue destination="F8z-Rh-Zks" kind="show" identifier="goToItems" id="wkA-6p-UOR"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xbv-tq-wdn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="901" y="118"/>
+        </scene>
+        <!--Get Going...-->
         <scene sceneID="O58-mr-Zx9">
             <objects>
                 <tableViewController id="F8z-Rh-Zks" customClass="TodoListViewController" customModule="Todoey" customModuleProvider="target" sceneMemberID="viewController">
@@ -40,7 +79,7 @@
                             <outlet property="delegate" destination="F8z-Rh-Zks" id="osi-es-he3"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Todoey" id="ad0-tw-z7B">
+                    <navigationItem key="navigationItem" title="Get Going..." id="ad0-tw-z7B">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="6p3-YG-oRq">
                             <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
@@ -51,7 +90,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cId-mq-mEp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1050.7246376811595" y="114.50892857142857"/>
+            <point key="canvasLocation" x="1652" y="115"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="HJc-8Z-YNg">
@@ -71,7 +110,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="F8z-Rh-Zks" kind="relationship" relationship="rootViewController" id="v1R-wL-KVN"/>
+                        <segue destination="qG2-vH-pzU" kind="relationship" relationship="rootViewController" id="6y3-Yb-kXX"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H1v-12-lRS" userLabel="First Responder" sceneMemberID="firstResponder"/>

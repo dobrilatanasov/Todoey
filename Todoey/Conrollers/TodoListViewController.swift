@@ -13,8 +13,11 @@ import CoreData
 class TodoListViewController: UITableViewController {
 // We are declaring an array of type Item, set in the Data Model
     var dummyItems = [Item]()
-    
-
+    var selectedCategory : Category? {
+        didSet{
+            LoadItems()
+        }
+    }
     
     //set a parameter for the UserDefault plist, where data can be saved
     let defaults = UserDefaults.standard
@@ -24,10 +27,7 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        
-       LoadItems()
-        
+ 
     }
     
     //MARK: Specify the necessary methods for the table view to show data
@@ -81,6 +81,7 @@ class TodoListViewController: UITableViewController {
                 
                 newItem.name = textField.text!
                 newItem.done = false
+                newItem.parentCategory = self.selectedCategory
                 self.dummyItems.append(newItem)
                 self.SaveItems()
             }
@@ -115,8 +116,16 @@ class TodoListViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    func LoadItems(with request : NSFetchRequest<Item> = Item.fetchRequest()){
-
+    func LoadItems(with request : NSFetchRequest<Item> = Item.fetchRequest(), predicate : NSPredicate? = nil){
+        
+        let categoryPredicate = NSPredicate(format: "parentCategory.title MATCHES %@", selectedCategory!.title!)
+        
+        if let additionalPredicate = predicate{
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
         do{
         dummyItems = try context.fetch(request)
         } catch {
@@ -133,12 +142,12 @@ extension TodoListViewController: UISearchBarDelegate {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
         //Specify the querry, where %@ is the argument, [cd] makes it not case censitive
         //run the rquest
-        request.predicate = NSPredicate(format: "name MATCHES[cd] %@", searchBar.text!)
+        let predicate = NSPredicate(format: "name MATCHES[cd] %@", searchBar.text!)
         //Set sort discriptor, which is a query for sorting the data, here we sort by title
         //run the sorting. It expects an array of sort discriptors, which can pass several sorting rules
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         //actually fetch the data
-        LoadItems(with: request)
+        LoadItems(with: request, predicate: predicate)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
