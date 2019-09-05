@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,7 +19,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         //get the path to the user documnets directory
-        print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        //print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        //Initialise Realm
+        do {
+            let realm = try Realm()
+        } catch {
+            print ("Error init. realm!")
+        }
         return true
     }
 
