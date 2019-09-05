@@ -78,6 +78,7 @@ class TodoListViewController: UITableViewController {
                         try self.realm.write {
                             let newItem = Item()
                             newItem.name = textField.text!
+                            newItem.dateCreated = Date()
                             //newItem.done = false is value by default
                             currentCategory.items.append(newItem)
                         }
@@ -115,40 +116,26 @@ class TodoListViewController: UITableViewController {
     }
 }
 
-//MARK: - Search Bar Methods
-//extension TodoListViewController: UISearchBarDelegate {
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        //Set the request by specifing its type and from where it fetches data. Basically we set the request load it with filters and sorters and run it
-//        let request : NSFetchRequest<Item> = Item.fetchRequest()
-//        //Specify the querry, where %@ is the argument, [cd] makes it not case censitive
-//        //run the rquest
-//        let predicate = NSPredicate(format: "name MATCHES[cd] %@", searchBar.text!)
-//        //Set sort discriptor, which is a query for sorting the data, here we sort by title
-//        //run the sorting. It expects an array of sort discriptors, which can pass several sorting rules
-//        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-//        //actually fetch the data
-//        LoadItems(with: request, predicate: predicate)
-//    }
-//
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//
-//        if searchBar.text?.count == 0 {
-//            LoadItems()
-//            DispatchQueue.main.async {
-//                searchBar.resignFirstResponder()
-//            }
-//        } else {
-//        //Set the request by specifing its type and from where it fetches data. Basically we set the request load it with filters and sorters and run it
-//        let request : NSFetchRequest<Item> = Item.fetchRequest()
-//        //Specify the querry, where %@ is the argument, [cd] makes it not case censitive
-//        //run the rquest
-//        request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
-//        //Set sort discriptor, which is a query for sorting the data, here we sort by title
-//        //run the sorting. It expects an array of sort discriptors, which can pass several sorting rules
-//        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-//        //actually fetch the data
-//        LoadItems(with: request)
-//        }
-//    }
-//}
+        //MARK: - Search Bar Methods
+extension TodoListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        dummyItems = dummyItems?.filter("name MATCHES %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
+        tableView.reloadData()
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+
+        if searchBar.text?.count == 0 {
+            LoadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        } else {
+            
+        dummyItems = dummyItems?.filter("name CONTAINS %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
+        }
+        tableView.reloadData()
+    }
+}
 
