@@ -120,7 +120,7 @@ class TodoListViewController: UITableViewController {
 extension TodoListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        dummyItems = dummyItems?.filter("name MATCHES %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
+        dummyItems = dummyItems?.filter("name MATCHES[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
         tableView.reloadData()
     }
 
@@ -133,7 +133,7 @@ extension TodoListViewController: UISearchBarDelegate {
             }
         } else {
             
-        dummyItems = dummyItems?.filter("name CONTAINS %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
+        dummyItems = dummyItems?.filter("name CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
         }
         tableView.reloadData()
     }
