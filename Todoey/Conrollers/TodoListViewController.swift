@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 
 // When specifing that the class is UITableViewController & the Table View Controller ins chosen in the main storybord then all the delegates and declarations are unnecessary, they are assumed.
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
 // We are declaring an array of type Item, set in the Data Model
     var dummyItems : Results<Item>?
     let realm = try! Realm()
@@ -23,7 +23,7 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
- 
+
     }
     
     //MARK: - Specify the necessary methods for the table view to show data
@@ -32,7 +32,7 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = dummyItems?[indexPath.row]{
             cell.textLabel?.text = item.name
@@ -113,6 +113,20 @@ class TodoListViewController: UITableViewController {
         //Loading items for the selected category (parent)
         dummyItems = selectedCategory?.items.sorted(byKeyPath: "name", ascending: true)
         tableView.reloadData()
+    }
+    
+    override func updateModel(at IndexPath: IndexPath) {
+        super.updateModel(at: IndexPath)
+        if let swipedItem = self.dummyItems?[IndexPath.row]{
+            do{
+                try self.realm.write {
+                    self.realm.delete(swipedItem)
+                }
+            } catch {
+                print ("Error deleting item!")
+            }
+        }
+        
     }
 }
 
