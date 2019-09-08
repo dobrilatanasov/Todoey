@@ -38,6 +38,7 @@ class TodoListViewController: SwipeTableViewController {
             cell.textLabel?.text = item.name
             // Turnery operator >>> value = condition ? valueIfTrue : value if False (heck the done status and than put the correct accessory)
             cell.accessoryType = item.done == true ? .checkmark : .none
+            cell.backgroundColor = UIColor(hexString: dummyItems?[indexPath.row].itemCellColor  ?? "1D9BF6")
         } else {
             cell.textLabel?.text = "Add your first todoey..."
         }
@@ -79,6 +80,7 @@ class TodoListViewController: SwipeTableViewController {
                             let newItem = Item()
                             newItem.name = textField.text!
                             newItem.dateCreated = Date()
+                            newItem.itemCellColor = (UIColor.randomFlat()?.hexValue())!
                             //newItem.done = false is value by default
                             currentCategory.items.append(newItem)
                         }
